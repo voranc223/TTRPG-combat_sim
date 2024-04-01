@@ -37,6 +37,17 @@ def action_menu(player):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 action = False
+        screen.fill(BLACK)
+        for i in range(20):
+            for j in range(20):
+                screen.blit(grass_image, (450 - j * 23 + i * 23, 200 + 12 * j + i * 12))
+                pygame.draw.polygon(screen, WHITE,
+                                    [(500 - j * 23 + i * 23, 223 + 12 * j + i * 12),
+                                     (523 - j * 23 + i * 23, 235 + 12 * j + i * 12),
+                                     (500 - j * 23 + i * 23, 247 + 12 * j + i * 12),
+                                     (477 - j * 23 + i * 23, 235 + 12 * j + i * 12)], 1)
+        screen.blit(player.image, (player.position[0] - 125, player.position[1] - 160))
+        player.draw_health_bar(screen, player.position)
         pygame.draw.rect(screen, LIGHT_BLUE, actions_rect, 0, 10)
         attack_button.draw()
         spell_button.draw()
@@ -44,8 +55,8 @@ def action_menu(player):
         screen.blit(spell_text, (40, 160))
         if attack_button.clicked:
             player.attack(screen, player.position, 10, p_2)
+            attack_button.clicked = False
         pygame.display.update()
-        clock.tick(fps)
 
 
 fps = 60

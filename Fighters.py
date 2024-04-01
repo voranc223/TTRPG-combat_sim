@@ -41,7 +41,7 @@ class Character:
                           (position[0] + 23 + attack_range / 5 * 46, position[1]),
                           (position[0], position[1] + 12 + attack_range / 5 * 24),
                           (position[0] - 23 - attack_range / 5 * 46, position[1])]
-        while attacking is True:
+        while attacking:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()

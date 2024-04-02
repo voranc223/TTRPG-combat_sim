@@ -37,7 +37,7 @@ def action_menu(player):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 action = False
-        screen.fill(BLACK)
+        screen.fill("light blue")
         for i in range(20):
             for j in range(20):
                 screen.blit(grass_image, (450 - j * 23 + i * 23, 200 + 12 * j + i * 12))
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        screen.fill(BLACK)
+        screen.fill("light blue")
         for i in range(20):
             for j in range(20):
                 screen.blit(grass_image, (450-j*23+i*23, 200+12*j+i*12))

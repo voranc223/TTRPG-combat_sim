@@ -1,6 +1,4 @@
 import random
-import time
-
 import pygame.display
 from random_stuff import *
 from Button_creation import button
@@ -37,15 +35,16 @@ class Character:
 
     def attack(self, screen, position, attack_range, target):
         attacking = True
-        attack_polygon = [(position[0], position[1] - 12 - attack_range / 5 * 24),
-                          (position[0] + 23 + attack_range / 5 * 46, position[1]),
-                          (position[0], position[1] + 12 + attack_range / 5 * 24),
-                          (position[0] - 23 - attack_range / 5 * 46, position[1])]
-        while attacking:
+        attack_polygon = Polygon([(position[0], position[1] - 12 - attack_range / 5 * 24),
+                                 (position[0] + 23 + attack_range / 5 * 46, position[1]),
+                                 (position[0], position[1] + 12 + attack_range / 5 * 24),
+                                 (position[0] - 23 - attack_range / 5 * 46, position[1])])
+        intersection = attack_polygon.intersection(field_polygon)
+        while attacking is True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-            pygame.draw.polygon(screen, RED, attack_polygon)
+            pygame.draw.polygon(screen, RED, intersection.exterior.coords)
             for i in range(20):
                 for j in range(20):
                     pygame.draw.polygon(screen, WHITE,
@@ -55,8 +54,8 @@ class Character:
                                          (477 - j * 23 + i * 23, 235 + 12 * j + i * 12)], 1)
             screen.blit(self.image, (position[0] - 125, position[1] - 160))
             self.draw_health_bar(screen, position)
-            if self.attack_bonus + random.randint(1, 20) >= target.armor_class:
-                target.current_health -= self.damage
+            """if self.attack_bonus + random.randint(1, 20) >= target.armor_class:
+                target.current_health -= self.damage"""
             pygame.display.update()
             attacking = False
 
@@ -67,10 +66,13 @@ class Character:
 
     def move(self, screen, position, player_number):
         pressed_1 = True
+        polygon_points_1 = Polygon([(position[0], position[1] - 156), (position[0] + 299, position[1]),
+                                   (position[0], position[1] + 156), (position[0] - 299, position[1])])
         polygon_points = [(position[0], position[1] - 156), (position[0] + 299, position[1]),
                           (position[0], position[1] + 156), (position[0] - 299, position[1])]
+        intersection = polygon_points_1.intersection(field_polygon)
         back_button = button(700, 30, 180, 60, screen)
-        pygame.draw.rect(screen,BLACK, (0, 0, 300, 330))
+        pygame.draw.rect(screen, "light blue", (0, 0, 300, 330))
         while pressed_1 is True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -78,10 +80,7 @@ class Character:
             if back_button.clicked:
                 pressed_1 = False
                 back_button.clicked = False
-            pygame.draw.polygon(screen, BLACK, (polygon_points[0],
-                                                polygon_points[1],
-                                                polygon_points[2],
-                                                polygon_points[3]))
+            pygame.draw.polygon(screen, "blue", intersection.exterior.coords)
             back_button.draw()
             screen.blit(back_text, (760, 40))
             for i in range(20):

@@ -15,6 +15,8 @@ p_1 = Character(fighter_1_scaled, [500, 233], 30, 10, 30, 0, 3, 1, f_1_offsets[0
 p_2 = Character(fighter_2_scaled, [937, 463], 30, 10, 30, 0, 3, 2, f_2_offsets[0], f_2_offsets[1], f_2_offsets[2])
 p_3 = Character(fighter_3_scaled, [63, 463], 30, 10, 30, 0, 3, 3, f_3_offsets[0], f_3_offsets[1], f_3_offsets[2])
 p_4 = Character(fighter_4_scaled, [500, 691], 30, 10, 30, 0, 3, 4, f_4_offsets[0], f_4_offsets[1], f_4_offsets[2])
+players = [p_1, p_2, p_3, p_4]
+turn = 0
 
 
 def action_menu(player):
@@ -55,10 +57,11 @@ if __name__ == "__main__":
         action_button.draw()
         bonus_action.draw()
         if move_button.clicked:
-            p_1.move(p_1.position, 1)
+            players[turn % len(players)].move(players[turn % len(players)].position, turn % len(players))
+            turn += 1
             move_button.clicked = False
         elif action_button.clicked:
-            action_menu(p_1)
+            action_menu(players[turn % len(players)])
         screen.blit(move_text, (80, 40))
         screen.blit(action_text, (75, 115))
         screen.blit(bonus_action_text, (28, 190))

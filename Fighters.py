@@ -7,16 +7,33 @@ from Button_creation import button
 pygame.init()
 
 
-occupied_squares = [(0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0)]
+occupied_positions = [(0, 0), (0, 0), (0, 0), (0, 0)]
+fighter_offsets = [(0, 0), (10, 8), (0, -5), (0, 6)]  # Example offsets for each fighter
+fighter_images = [fighter_1_scaled, fighter_2_scaled, fighter_3_scaled, fighter_4_scaled]
+fighters_health = [30, 30, 30, 30]
+
+
+def draw_fighters():
+    sorted_data = sorted(zip(occupied_positions, fighter_offsets, fighter_images), key=lambda data: data[0][1])
+    for (x, y), (offset_x, offset_y), fighter_image in sorted_data:
+        screen.blit(fighter_image, (x + offset_x - 125, y + offset_y - 160))
+
+
+def draw_health_bars():
+    for i in range(4):
+        pygame.draw.rect(screen, "red", (occupied_positions[i][0] - 50,
+                                         occupied_positions[i][1] - 100, 100, 15))
+        pygame.draw.rect(screen, "yellow", (occupied_positions[i][0] - 50,
+                                            occupied_positions[i][1] - 100, 100 / 30 * fighters_health[i], 15))
 
 
 class Character:
-    def __init__(self, race, Class, name, image, position, movement,
-                 damage_die, health, proficiency_bonus, total_spell_slots, player_number):
-        self.name = name
-        self.race = race
-        self.Class = Class
+    def __init__(self, image, position, movement,
+                 damage_die, health, proficiency_bonus,
+                 total_spell_slots, player_number, x_offset, y_offset, health_offset):
         self.image = image
+        self.x = x_offset
+        self.y = y_offset
         self.modifiers = Modifiers(3, 0, 1, -1, 0, 3)
         self.position = position
         self.movement = movement
@@ -28,12 +45,15 @@ class Character:
         self.total_spell_slots = total_spell_slots
         self.spells_used = 0
         self.current_spell_slots = total_spell_slots - self.spells_used
-        occupied_squares[player_number - 1] = self.position
+        self.health_offset = health_offset
+        occupied_positions[player_number - 1] = (self.position[0], self.position[1])
 
-    def draw_fighter(self, screen, position):
-        screen.blit(self.image, (position[0] - 125, position[1] - 160))
+    def draw_health_bar(self, position):
+        pygame.draw.rect(screen, RED, (position[0] - 50, position[1] - 90 - self.health_offset, 100, 12))
+        pygame.draw.rect(screen, YELLOW, (position[0] - 50, position[1] - 90 - self.health_offset,
+                                          100 * (self.current_health / self.max_health), 12))
 
-    def attack(self, screen, position, attack_range, target):
+    def attack(self, position, attack_range, target):
         attacking = True
         attack_polygon = Polygon([(position[0], position[1] - 12 - attack_range / 5 * 24),
                                  (position[0] + 23 + attack_range / 5 * 46, position[1]),
@@ -45,53 +65,36 @@ class Character:
                 if event.type == pygame.QUIT:
                     pygame.quit()
             pygame.draw.polygon(screen, RED, intersection.exterior.coords)
-            for i in range(20):
-                for j in range(20):
-                    pygame.draw.polygon(screen, WHITE,
-                                        [(500 - j * 23 + i * 23, 223 + 12 * j + i * 12),
-                                         (523 - j * 23 + i * 23, 235 + 12 * j + i * 12),
-                                         (500 - j * 23 + i * 23, 247 + 12 * j + i * 12),
-                                         (477 - j * 23 + i * 23, 235 + 12 * j + i * 12)], 1)
-            screen.blit(self.image, (position[0] - 125, position[1] - 160))
-            self.draw_health_bar(screen, position)
+            borders()
+            draw_fighters()
+            draw_health_bars()
             """if self.attack_bonus + random.randint(1, 20) >= target.armor_class:
                 target.current_health -= self.damage"""
             pygame.display.update()
             attacking = False
 
-    def draw_health_bar(self, screen, position):
-        pygame.draw.rect(screen, RED, (position[0] - 50, position[1] - 90, 100, 12))
-        pygame.draw.rect(screen, YELLOW, (position[0] - 50, position[1] - 90,
-                                          100 * (self.current_health / self.max_health), 12))
-
-    def move(self, screen, position, player_number):
+    def move(self, position, player_number):
         pressed_1 = True
         polygon_points_1 = Polygon([(position[0], position[1] - 156), (position[0] + 299, position[1]),
                                    (position[0], position[1] + 156), (position[0] - 299, position[1])])
         polygon_points = [(position[0], position[1] - 156), (position[0] + 299, position[1]),
                           (position[0], position[1] + 156), (position[0] - 299, position[1])]
-        intersection = polygon_points_1.intersection(field_polygon)
         back_button = button(700, 30, 180, 60, screen)
         pygame.draw.rect(screen, "light blue", (0, 0, 300, 330))
         while pressed_1 is True:
+            intersection = polygon_points_1.intersection(field_polygon)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
             if back_button.clicked:
                 pressed_1 = False
                 back_button.clicked = False
-            pygame.draw.polygon(screen, "blue", intersection.exterior.coords)
+            pygame.draw.polygon(screen, "silver", intersection.exterior.coords)
             back_button.draw()
             screen.blit(back_text, (760, 40))
-            for i in range(20):
-                for j in range(20):
-                    pygame.draw.polygon(screen, WHITE,
-                                        [(500 - j * 23 + i * 23, 223 + 12 * j + i * 12),
-                                         (523 - j * 23 + i * 23, 235 + 12 * j + i * 12),
-                                         (500 - j * 23 + i * 23, 247 + 12 * j + i * 12),
-                                         (477 - j * 23 + i * 23, 235 + 12 * j + i * 12)], 1)
-            screen.blit(self.image, (position[0] - 125, position[1] - 160))
-            self.draw_health_bar(screen, position)
+            borders()
+            draw_fighters()
+            draw_health_bars()
             if pygame.mouse.get_pressed()[0] == 1:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 is_inside = False
@@ -110,9 +113,9 @@ class Character:
                                     closest[1] - mouse_y):
                                 closest[0] = j[0]
                                 closest[1] = j[1]
-                    if (closest[0], closest[1]) not in occupied_squares:
-                        self.position = closest
-                        occupied_squares[player_number - 1] = self.position
+                    if (closest[0], closest[1]) not in occupied_positions:
+                        occupied_positions[player_number - 1] = (closest[0], closest[1])
+                        self.position = [closest[0], closest[1]]
                         pressed_1 = False
             pygame.display.update()
 

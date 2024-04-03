@@ -114,7 +114,7 @@ class Character:
                                 closest[0] = j[0]
                                 closest[1] = j[1]
                     if (closest[0], closest[1]) not in occupied_positions:
-                        occupied_positions[player_number - 1] = (closest[0], closest[1])
+                        occupied_positions[player_number] = (closest[0], closest[1])
                         self.position = [closest[0], closest[1]]
                         pressed_1 = False
             pygame.display.update()
@@ -139,3 +139,4 @@ class Armor:
         if modifiers.dexterity > dex_bonus_cap:
             modifiers.dexterity = dex_bonus_cap
         self.armor_class = armor_class + modifiers.dexterity
+        

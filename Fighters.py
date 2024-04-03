@@ -60,7 +60,7 @@ class Character:
                                  (position[0], position[1] + 12 + attack_range / 5 * 24),
                                  (position[0] - 23 - attack_range / 5 * 46, position[1])])
         intersection = attack_polygon.intersection(field_polygon)
-        while attacking is True:
+        while attacking:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -81,7 +81,7 @@ class Character:
                           (position[0], position[1] + 156), (position[0] - 299, position[1])]
         back_button = button(700, 30, 180, 60, screen)
         pygame.draw.rect(screen, "light blue", (0, 0, 300, 330))
-        while pressed_1 is True:
+        while pressed_1:
             intersection = polygon_points_1.intersection(field_polygon)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

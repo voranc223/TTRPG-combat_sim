@@ -5,30 +5,16 @@ from Button_creation import button
 pygame.init()
 
 
-screen = pygame.display.set_mode((1000, 800))
-grass_image = pygame.image.load("images/grass_image.png").convert_alpha()
-grass_image = pygame.transform.scale(grass_image, (100, 100))
-fighter_1 = pygame.image.load("images/Idle.png").convert_alpha()
-fighter_1_idle = fighter_1.subsurface((0, 0, 200, 200))
-fighter_1_scaled = pygame.transform.scale(fighter_1_idle, (250, 250))
 move_button = button(30, 40, 180, 50, screen)
 action_button = button(30, 115, 180, 50, screen)
 attack_button = button(30, 50, 180, 80, screen)
 spell_button = button(30, 160, 180, 80, screen)
 bonus_action = button(30, 190, 180, 50, screen)
-rect_width = 10
 clock = pygame.time.Clock()
-closest = [500, 223]
-closest_1 = [0, 0]
-mouse_pressed = False
-p_1 = Character("Harold", "Dragonborn", "paladin", fighter_1_scaled, [500, 233], 30, 10, 30, 0, 3, 1)
-p_2 = Character("eragon", "half_elf", "warlock", fighter_1_scaled, [477, 245], 30, 10, 30, 0, 3, 2)
-game_field = []
-for i in range(20):
-    new_row = []
-    for j in range(20):
-        new_row.append(j+i*20)
-    game_field.append(new_row)
+p_1 = Character(fighter_1_scaled, [500, 233], 30, 10, 30, 0, 3, 1, f_1_offsets[0], f_1_offsets[1], f_1_offsets[2])
+p_2 = Character(fighter_2_scaled, [937, 463], 30, 10, 30, 0, 3, 2, f_2_offsets[0], f_2_offsets[1], f_2_offsets[2])
+p_3 = Character(fighter_3_scaled, [63, 463], 30, 10, 30, 0, 3, 3, f_3_offsets[0], f_3_offsets[1], f_3_offsets[2])
+p_4 = Character(fighter_4_scaled, [500, 691], 30, 10, 30, 0, 3, 4, f_4_offsets[0], f_4_offsets[1], f_4_offsets[2])
 
 
 def action_menu(player):
@@ -38,23 +24,16 @@ def action_menu(player):
             if event.type == pygame.QUIT:
                 action = False
         screen.fill("light blue")
-        for i in range(20):
-            for j in range(20):
-                screen.blit(grass_image, (450 - j * 23 + i * 23, 200 + 12 * j + i * 12))
-                pygame.draw.polygon(screen, WHITE,
-                                    [(500 - j * 23 + i * 23, 223 + 12 * j + i * 12),
-                                     (523 - j * 23 + i * 23, 235 + 12 * j + i * 12),
-                                     (500 - j * 23 + i * 23, 247 + 12 * j + i * 12),
-                                     (477 - j * 23 + i * 23, 235 + 12 * j + i * 12)], 1)
-        screen.blit(player.image, (player.position[0] - 125, player.position[1] - 160))
-        player.draw_health_bar(screen, player.position)
+        basic_field()
+        draw_fighters()
+        draw_health_bars()
         pygame.draw.rect(screen, LIGHT_BLUE, actions_rect, 0, 10)
         attack_button.draw()
         spell_button.draw()
         screen.blit(attack_text, (40, 60))
         screen.blit(spell_text, (40, 160))
         if attack_button.clicked:
-            player.attack(screen, player.position, 10, p_2)
+            player.attack(player.position, 10, p_2)
             attack_button.clicked = False
         pygame.display.update()
 
@@ -68,22 +47,15 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 running = False
         screen.fill("light blue")
-        for i in range(20):
-            for j in range(20):
-                screen.blit(grass_image, (450-j*23+i*23, 200+12*j+i*12))
-                pygame.draw.polygon(screen, WHITE,
-                                    [(500 - j * 23 + i * 23, 223 + 12 * j + i * 12),
-                                     (523 - j * 23 + i * 23, 235 + 12 * j + i * 12),
-                                     (500 - j * 23 + i * 23, 247 + 12 * j + i * 12),
-                                     (477 - j * 23 + i * 23, 235 + 12 * j + i * 12)], 1)
-        p_1.draw_fighter(screen, p_1.position)
-        p_1.draw_health_bar(screen, p_1.position)
+        basic_field()
+        draw_fighters()
+        draw_health_bars()
         pygame.draw.rect(screen, LIGHT_BLUE, actions_rect, 0, 10)
         move_button.draw()
         action_button.draw()
         bonus_action.draw()
         if move_button.clicked:
-            p_1.move(screen, p_1.position, 1)
+            p_1.move(p_1.position, 1)
             move_button.clicked = False
         elif action_button.clicked:
             action_menu(p_1)
